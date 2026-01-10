@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkBill | Professional Invoice Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="logo-text">
+                    <h1 contenteditable="true" class="editable-heading">SparkBill</h1>
+                    <p contenteditable="true" class="editable-subtitle">Professional Invoice Generator</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" id="saveDraftBtn">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+                <button class="btn btn-primary" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </header>
+        
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+        
+        <div class="main-content">
+            <!-- Invoice Form -->
+            <div class="invoice-form">
+                <div class="form-header">
+                    <div class="invoice-title">
+                        <h2 contenteditable="true">Create New Invoice</h2>
+                        <p contenteditable="true">Fill in the details below to generate your invoice</p>
+                    </div>
+                    <div class="invoice-number-container">
+                        <div class="invoice-number-label">Invoice Number</div>
+                        <input type="text" class="invoice-number-input" id="invoiceNumber" value="#INV-2023-001">
+                        <div class="invoice-number-hint">Click to edit • Press Enter to save</div>
+                    </div>
+                </div>
+                
+                <!-- Logo Upload -->
+                <div class="form-section">
+                    <div class="section-title" contenteditable="true">
+                        <i class="fas fa-image"></i>
+                        <span>Brand Identity</span>
+                    </div>
+                    <div class="logo-upload" id="logoUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop your logo or click to browse</p>
+                        <p style="font-size: 12px; margin-top: 5px;">Recommended: 300x100px PNG or JPG</p>
+                    </div>
+                    <input type="file" id="logoInput" accept="image/*" style="display: none;">
+                    <div id="logoPreview" class="logo-preview"></div>
+                </div>
+                
+                <!-- Bill From & To -->
+                <div class="form-section">
+                    <div class="section-title" contenteditable="true">
+                        <i class="fas fa-address-book"></i>
+                        <span>Bill From & To</span>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Bill From -->
+                        <div class="address-group">
+                            <h4><i class="fas fa-building"></i> <span contenteditable="true">Bill From (Your Business)</span></h4>
+                            <textarea class="address-textarea" id="billFrom" placeholder="Enter your business details (press Enter for new line)&#10;Example:&#10;SparkBill Inc.&#10;123 Business Street&#10;New York, NY 10001&#10;Phone: (123) 456-7890&#10;Email: billing@sparkbill.com">SparkBill Inc.
+123 Business Street
+New York, NY 10001
+Phone: (123) 456-7890
+Email: billing@sparkbill.com</textarea>
+                            <div class="address-hint">Press Enter for new lines. Include name, address, phone, email, etc.</div>
+                        </div>
+                        
+                        <!-- Bill To -->
+                        <div class="address-group">
+                            <h4><i class="fas fa-user-tie"></i> <span contenteditable="true">Bill To (Client)</span></h4>
+                            <textarea class="address-textarea" id="billTo" placeholder="Enter client billing details (press Enter for new line)&#10;Example:&#10;Acme Corporation&#10;Attn: John Smith&#10;456 Corporate Ave&#10;Boston, MA 02115&#10;Phone: (987) 654-3210">Acme Corporation
+Attn: John Smith
+456 Corporate Ave
+Boston, MA 02115
+Phone: (987) 654-3210</textarea>
+                            <div class="address-hint">Client's billing address for invoice purposes</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ship To -->
+                    <div class="address-group" style="margin-top: 20px;">
+                        <h4><i class="fas fa-truck"></i> <span contenteditable="true">Ship To (Optional - if different from billing)</span></h4>
+                        <textarea class="address-textarea" id="shipTo" placeholder="Enter shipping address if different from billing&#10;Example:&#10;Acme Corporation Warehouse&#10;789 Shipping Lane&#10;Boston, MA 02116&#10;Contact: Warehouse Manager"></textarea>
+                        <div class="address-hint" contenteditable="true">Leave empty if same as billing address</div>
+                        
+                        <div class="same-address">
+                            <input type="checkbox" id="sameAsBilling">
+                            <label for="sameAsBilling" contenteditable="true">Same as billing address</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Invoice Details -->
+                <div class="form-section">
+                    <div class="section-title" contenteditable="true">
+                        <i class="fas fa-cogs"></i>
+                        <span>Invoice Details</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label contenteditable="true">Invoice Date</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-calendar"></i>
+                                <input type="date" class="form-control" id="invoiceDate" value="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label contenteditable="true">Due Date</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-calendar-check"></i>
+                                <input type="date" class="form-control" id="dueDate" value="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label contenteditable="true">Payment Terms</label>
+                            <div class="payment-terms-container">
+                                <div class="payment-term-option" data-days="7">7 Days</div>
+                                <div class="payment-term-option active" data-days="15">15 Days</div>
+                                <div class="payment-term-option" data-days="30">30 Days</div>
+                                <div class="payment-term-option" data-days="60">60 Days</div>
+                                <div class="payment-term-option" data-days="custom">
+                                    <input type="number" class="custom-days-input" placeholder="Custom" id="customDays" min="1" max="365">
+                                    <span style="margin-left: 5px; font-size: 12px; color: var(--gray);">Days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label contenteditable="true">PO Number (Optional)</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-hashtag"></i>
+                                <input type="text" class="form-control" id="poNumber" placeholder="PO-12345">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Items Table -->
+                <div class="form-section">
+                    <div class="section-title" contenteditable="true">
+                        <i class="fas fa-list"></i>
+                        <span>Line Items</span>
+                    </div>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th contenteditable="true">Item Description</th>
+                                <th width="100" contenteditable="true">Quantity</th>
+                                <th width="120" contenteditable="true">Rate ($)</th>
+                                <th width="120" contenteditable="true">Amount ($)</th>
+                                <th width="50">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Items will be dynamically added here -->
+                        </tbody>
+                    </table>
+                    <button class="add-item" id="addItemBtn">
+                        <i class="fas fa-plus-circle"></i> Add New Line Item
+                    </button>
+                </div>
+                
+                <!-- Notes & Terms -->
+                <div class="notes-terms">
+                    <div class="form-grid">
+                        <div class="textarea-group">
+                            <label contenteditable="true"><i class="fas fa-sticky-note"></i> Notes</label>
+                            <textarea id="notes" placeholder="Thank you for your business! Please make payment within the specified due date."></textarea>
+                        </div>
+                        <div class="textarea-group">
+                            <label contenteditable="true"><i class="fas fa-file-contract"></i> Terms & Conditions</label>
+                            <textarea id="terms" placeholder="Payment due within 15 days. Late payments subject to 1.5% monthly interest."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice Summary -->
+            <div class="invoice-summary">
+                <h2 class="summary-title" contenteditable="true">Invoice Summary</h2>
+                
+                <div class="currency-selector">
+                    <label><strong contenteditable="true">Currency:</strong></label>
+                    <select id="currencySelect">
+                        <option value="USD" selected>USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="JPY">JPY (¥)</option>
+                        <option value="CAD">CAD ($)</option>
+                        <option value="INR">INR (₹)</option>
+                        <option value="AUD">AUD ($)</option>
+                    </select>
+                </div>
+                
+                <div class="summary-item">
+                    <span class="summary-label" contenteditable="true">Subtotal</span>
+                    <span class="summary-value" id="subtotal">$0.00</span>
+                </div>
+                
+                <!-- Tax Control -->
+                <div class="amount-control" id="taxControl">
+                    <div class="amount-control-header">
+                        <span class="amount-control-label" contenteditable="true">Tax</span>
+                        <div class="toggle-switch">
+                            <span class="toggle-option active" data-type="percentage">%</span>
+                            <span class="toggle-option" data-type="amount">$</span>
+                        </div>
+                    </div>
+                    <div class="amount-control-inputs">
+                        <div class="amount-input-group">
+                            <div class="relative">
+                                <input type="number" id="taxValue" value="0" step="0.01" min="0">
+                                <span class="input-suffix" id="taxSuffix">%</span>
+                            </div>
+                        </div>
+                        <div class="amount-input-group">
+                            <input type="number" id="taxAmount" value="0.00" step="0.01" min="0" readonly style="background: #f0f4ff;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Discount Control -->
+                <div class="amount-control" id="discountControl">
+                    <div class="amount-control-header">
+                        <span class="amount-control-label" contenteditable="true">Discount</span>
+                        <div class="toggle-switch">
+                            <span class="toggle-option active" data-type="percentage">%</span>
+                            <span class="toggle-option" data-type="amount">$</span>
+                        </div>
+                    </div>
+                    <div class="amount-control-inputs">
+                        <div class="amount-input-group">
+                            <div class="relative">
+                                <input type="number" id="discountValue" value="0" step="0.01" min="0">
+                                <span class="input-suffix" id="discountSuffix">%</span>
+                            </div>
+                        </div>
+                        <div class="amount-input-group">
+                            <input type="number" id="discountAmount" value="0.00" step="0.01" min="0" readonly style="background: #f0f4ff;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Control -->
+                <div class="amount-control" id="shippingControl">
+                    <div class="amount-control-header">
+                        <span class="amount-control-label" contenteditable="true">Shipping</span>
+                        <div class="toggle-switch">
+                            <span class="toggle-option active" data-type="amount">$</span>
+                            <span class="toggle-option" data-type="percentage">%</span>
+                        </div>
+                    </div>
+                    <div class="amount-control-inputs">
+                        <div class="amount-input-group">
+                            <div class="relative">
+                                <input type="number" id="shippingValue" value="0" step="0.01" min="0">
+                                <span class="input-suffix" id="shippingSuffix">$</span>
+                            </div>
+                        </div>
+                        <div class="amount-input-group">
+                            <input type="number" id="shippingAmount" value="0.00" step="0.01" min="0" readonly style="background: #f0f4ff;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="total-section">
+                    <div class="summary-item">
+                        <span class="summary-label" contenteditable="true">Total Amount</span>
+                        <span class="summary-value" id="totalAmount">$0.00</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label" contenteditable="true">Amount Paid</span>
+                        <span class="summary-value">
+                            <input type="number" id="amountPaid" value="0" step="0.01" min="0" class="amount-paid-input">
+                        </span>
+                    </div>
+                    
+                    <div class="total-row">
+                        <span contenteditable="true" id="balanceDueLabel">Balance Due</span>
+                        <span class="amount-due" id="balanceDue">$0.00</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f0f4ff; border-radius: 10px;">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;"><i class="fas fa-lightbulb"></i> Invoice Tips</h3>
+                    <ul style="font-size: 13px; color: var(--gray); padding-left: 20px;">
+                        <li>Customize your invoice number for easy tracking</li>
+                        <li>Press <strong>Enter</strong> for new lines in address fields</li>
+                        <li>Toggle between % and $ for tax, discount, and shipping</li>
+                        <li>Save drafts locally to continue later</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer" contenteditable="true">
+            <p>SparkBill Invoice Generator | Create professional invoices in minutes</p>
+            <div class="color-dots">
+                <div class="color-dot dot-1"></div>
+                <div class="color-dot dot-2"></div>
+                <div class="color-dot dot-3"></div>
+                <div class="color-dot dot-4"></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Initialize Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(err => console.log('Service Worker Registration Failed: ', err));
+        }
+    </script>
+</body>
+</html>
